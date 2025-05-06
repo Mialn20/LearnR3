@@ -21,18 +21,32 @@ library(snakecase)
 cgm_101 <- here("data-raw/dime/cgm/101.csv") |>
   read_csv(show_col_types = FALSE,
            name_repair = to_snake_case,
-           
-           
-           
-           
            n_max = 100)
 
-View(cgm_101)
+sleep_101 <- here("data-raw/dime/sleep/101.csv") |>
+  read_csv(show_col_types = FALSE,
+           name_repair = to_snake_case,
+           n_max = 50)
+
+
+
+View(sleep_101)
 
 ```
 
-\##
+## Function
 
 ```{r}
+#' Adds two numbers
+#'
+#' @param num1 is a number
+#' @param num2 is a number
+#'
+#' @returns gives the sum of the two numbers
+#' @export
+add_numbers <- function(num1, num2) {
+  added <- num1 + num2
+  return(added)
+}
 
 ```
