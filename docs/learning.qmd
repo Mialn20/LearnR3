@@ -1,21 +1,25 @@
 ---
 title: "Draft Quarto document"
 author: "Mikkel Alnor"
+date: "`r Sys.Date()`"
 format: html
+theme: Darkly
 ---
 
-## Header 1
+## Setup chunk
 
 ```{r setup}
 #| include: false
 library(tidyverse)
 library(here)
 library(snakecase)
+library(readr)
+
 ```
 
 # Importing DIME data
 
-## Importing CGM data
+## Importing CGM data manually
 
 ```{r}
 cgm_101 <- here("data-raw/dime/cgm/101.csv") |>
@@ -38,7 +42,7 @@ View(sleep_101)
 
 ### Adding function
 
-```{r setup}
+```{r}
 #' Adds two numbers
 #'
 #' @param num1 is a number
@@ -61,7 +65,7 @@ add_numbers <- function(num1, num2) {
 #'
 #' @param file_path File path for cgm data
 #'
-#' @returns Imported file
+#' @returns Imported file as data.frame
 import_cgm <- function(file_path) {
   cgm <- file_path |>
     read_csv(
@@ -72,12 +76,11 @@ import_cgm <- function(file_path) {
   return(cgm)
 }
 
-
 #' Import function Sleep
 #'
 #' @param file_path File path for Sleep data
 #'
-#' @returns Imported file
+#' @returns Imported file data.frame
 import_sleep <- function(file_path) {
   sleep <- file_path |>
     read_csv(
@@ -95,5 +98,22 @@ here("data-raw/dime/cgm/104.csv") |>
 here("data-raw/dime/sleep/101.csv") |>
   import_sleep()
 
+
+```
+
+### General import function
+
+```{r}
+import_data_snake <- function(file_path,n=50) {
+  data <- file_path |>
+    readr::read_csv(
+      show_col_types = FALSE,
+      name_repair = snakecase::to_snake_case,
+      n_max = n)
+  return(data)
+}
+
+here("data-raw/dime/cgm/101.csv") |>
+  import_data_snake()
 
 ```
