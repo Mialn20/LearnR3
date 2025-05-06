@@ -25,8 +25,8 @@ import_dime <- function(file_path,n=50) {
 #' @param n
 #'
 #' @returns data.frame of n rows of the raw data
-import_data_snake <- function(type_sort,patient,n=50) {
-  data <- here::here(paste0("data-raw/dime/",as.character(type_sort),"/",as.character(patient),".csv")) |>
+import_data_snake <- function(type_sort,id,n=50) {
+  data <- here::here(paste0("data-raw/dime/",as.character(type_sort),"/",as.character(id),".csv")) |>
     readr::read_csv(
       show_col_types = FALSE,
       name_repair = snakecase::to_snake_case,
