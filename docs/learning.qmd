@@ -104,6 +104,12 @@ here("data-raw/dime/sleep/101.csv") |>
 ### General import function
 
 ```{r}
+#' General Import function
+#'
+#' @param file_path File path to raw data
+#' @param n Number of rows to import
+#'
+#' @returns data.frame of n rows of the raw data
 import_data_snake <- function(file_path,n=50) {
   data <- file_path |>
     readr::read_csv(
@@ -113,7 +119,19 @@ import_data_snake <- function(file_path,n=50) {
   return(data)
 }
 
-here("data-raw/dime/cgm/101.csv") |>
-  import_data_snake()
+
+
+
+
+# test function
+import_data_snake <- function(type,patient,n=50) {
+  data <- here(paste0("data-raw/dime/",as.character(type),"/",as.character(patient),".csv")) |>
+    readr::read_csv(
+      show_col_types = FALSE,
+      name_repair = snakecase::to_snake_case,
+      n_max = as.numeric(n))
+  return(data)
+}
+import_data_snake("cgm","101",50)
 
 ```
