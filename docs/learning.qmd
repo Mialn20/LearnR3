@@ -36,7 +36,7 @@ View(sleep_101)
 
 ## Function
 
-```{r}
+```{r setup}
 #' Adds two numbers
 #'
 #' @param num1 is a number
@@ -48,5 +48,50 @@ add_numbers <- function(num1, num2) {
   added <- num1 + num2
   return(added)
 }
+
+```
+
+```{r}
+
+#' Import function CGM
+#'
+#' @param file_path File path for cgm
+#'
+#' @returns Imported file
+import_cgm <- function(file_path) {
+  cgm <- file_path |>
+    read_csv(
+      show_col_types = FALSE,
+      name_repair = to_snake_case,
+      n_max = 100
+    )
+  return(cgm)
+}
+
+
+#' Import function Sleep
+#'
+#' @param file_path File path for Sleep
+#'
+#' @returns Imported file
+import_sleep <- function(file_path) {
+  sleep <- file_path |>
+    read_csv(
+      show_col_types = FALSE,
+      name_repair = to_snake_case,
+      n_max = 100
+    )
+  return(sleep)
+}
+
+
+
+here("data-raw/dime/cgm/101.csv") |>
+  import_cgm()
+
+
+here("data-raw/dime/sleep/101.csv") |>
+  import_sleep()
+
 
 ```
