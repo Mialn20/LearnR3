@@ -1,0 +1,17 @@
+---
+title: "Draft Quarto document"
+author: "Mikkel Alnor"
+format: html
+---
+
+## Header 1
+
+```{r setup}
+#| include: false
+```
+
+# Importing DIME data
+
+```{r}
+
+```
