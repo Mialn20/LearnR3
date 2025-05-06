@@ -34,7 +34,9 @@ View(sleep_101)
 
 ```
 
-## Function
+## Functions
+
+### Adding function
 
 ```{r setup}
 #' Adds two numbers
@@ -51,11 +53,13 @@ add_numbers <- function(num1, num2) {
 
 ```
 
+### Importing function
+
 ```{r}
 
 #' Import function CGM
 #'
-#' @param file_path File path for cgm
+#' @param file_path File path for cgm data
 #'
 #' @returns Imported file
 import_cgm <- function(file_path) {
@@ -71,7 +75,7 @@ import_cgm <- function(file_path) {
 
 #' Import function Sleep
 #'
-#' @param file_path File path for Sleep
+#' @param file_path File path for Sleep data
 #'
 #' @returns Imported file
 import_sleep <- function(file_path) {
@@ -84,9 +88,7 @@ import_sleep <- function(file_path) {
   return(sleep)
 }
 
-
-
-here("data-raw/dime/cgm/101.csv") |>
+here("data-raw/dime/cgm/104.csv") |>
   import_cgm()
 
 
