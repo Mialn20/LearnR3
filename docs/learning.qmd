@@ -20,7 +20,13 @@ library(snakecase)
 ```{r}
 cgm_101 <- here("data-raw/dime/cgm/101.csv") |>
   read_csv(show_col_types = FALSE,
-           name_repair = to_snake_case)
+           name_repair = to_snake_case,
+           
+           
+           
+           
+           n_max = 100)
+
 View(cgm_101)
 
 ```
