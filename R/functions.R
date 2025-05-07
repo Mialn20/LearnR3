@@ -97,7 +97,7 @@ prepare_dates <- function(data,column){
 
 
 
-## cleaning functions
+#----- cleaning functions -----
 
 #' Cleans CGM data
 #'

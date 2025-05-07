@@ -9,9 +9,9 @@ theme: Darkly
 ## Setup chunk
 
 ```{r setup}
-#| include: false
+#| include: FALSE
 
-pak::pak()
+#pak::pak()
 library(tidyverse)
 library(here)
 library(snakecase)
@@ -233,6 +233,26 @@ prepare_dates <- function(data,column){
 ## Section 10
 
 ```{r}
+summarise_column <- function(data, column, functions) {
+  data |>
+    dplyr::select(
+      -tidyselect::contains("device_timestamp"),
+      -tidyselect::contains("datetime")
+    ) |>
+    dplyr::group_by(dplyr::pick(-{{ column }})) |>
+    dplyr::summarise(
+      dplyr::across(
+        {{ column }},
+        functions
+      ),
+      .groups = "drop"
+    )
+}
 
 
+cgm_data |>
+  summarise_column(glucose,list(sum=sum,median=median,sd=sd))
+
+sleep_data |>
+  summarise_column(seconds,sum)
 ```
