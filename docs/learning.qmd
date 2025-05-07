@@ -20,12 +20,24 @@ library(fs)
 library(purrr)
 library(stringr)
 library(dplyr)
+library(lubridate)
 #usethis::use_package("")
 
 source(here("R/functions.R"))
 
-cgm_data <- here::here("data-raw/dime/cgm/") |> 
-  import_csv()
+cgm_data <- here::here("data-raw/dime/cgm") |> 
+  import_csv() |> 
+  get_participant_id() |> 
+  prepare_dates(device_timestamp)
+
+sleep_data <- here("data-raw/dime/sleep") |>
+  import_csv() |>
+  get_participant_id() |>
+  rename(datetime = date) |> 
+  prepare_dates(datetime)
+
+
+
 
 ```
 
@@ -162,8 +174,7 @@ str_extract(text,"[:digit:]+\\.csv$")
 
 ## Using regex for ID extraction
 
-```{r}
-
+```{r eval=FALSE}
 
 cgm_data |> 
   dplyr::mutate(
@@ -176,17 +187,53 @@ cgm_data |>
 
 ```
 
-```{r}
-
-cgm_data <- here::here("data-raw/dime/cgm") |> 
-  import_csv() |> 
-  get_participant_id()
-
-cgm_sleep <- here::here("data-raw/dime/sleep") |> 
-  import_csv() |> 
-  get_participant_id()
-
+```{r eval =FALSE}
 
 cgm_data
-cgm_sleep
+sleep_data
+
+```
+
+## Working with dates  extraction
+
+```{r eval=FALSE}
+
+time_extraction <- function(data){
+  data_output <- data |>  
+    dplyr::mutate(
+      date = lubridate::as_date(device_timestamp),
+      hour = lubridate::hour(device_timestamp),
+      .before = device_timestamp
+  ) |> 
+  dplyr::select(-device_timestamp)
+  
+  return(data_output)
+}
+
+
+test2 <- here::here("data-raw/dime/cgm") |> 
+  import_csv() |> 
+  get_participant_id() |> 
+  time_extraction()
+test2
+```
+
+```{r eval=FALSE}
+
+prepare_dates <- function(data,column){
+  data_output <- data |>  
+    dplyr::mutate(
+      date = lubridate::as_date({{column}}),
+      hour = lubridate::hour({{column}}),
+      .before = {{column}}
+  ) |> 
+  dplyr::select(-{{column}})
+  
+  return(data_output)
+}
+
+```
+
+```{r}
+
 ```

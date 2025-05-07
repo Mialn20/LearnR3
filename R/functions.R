@@ -38,6 +38,7 @@ import_data_snake <- function(type_sort,id,n=50) {
 
 
 #---- Importing function 3 ----
+
 #' importing csv
 #'
 #' @param folder_path path to the folder containing the csv files
@@ -63,7 +64,7 @@ import_csv <- function(folder_path){
 #' @returns
 
 get_participant_id <- function(Import_file){
-  Import_file |>
+  return_data <- Import_file |>
     dplyr::mutate(
       id = stringr::str_extract(file_path_id,"[:digit:]+\\.csv$",) |>
         stringr::str_remove("\\.csv$") |>
@@ -71,4 +72,24 @@ get_participant_id <- function(Import_file){
       .before = file_path_id
     ) |>
     select(-file_path_id)
+
+  return(return_data)
+}
+
+
+
+#' preparing the dates
+#' @param data data.frame containing the dataset from import_csv
+#' @param column name of the column containing the date
+
+prepare_dates <- function(data,column){
+  data_output <- data |>
+    dplyr::mutate(
+      date = lubridate::as_date({{column}}),
+      hour = lubridate::hour({{column}}),
+      .before = {{column}}
+    ) |>
+    dplyr::select(-{{column}})
+
+  return(data_output)
 }
