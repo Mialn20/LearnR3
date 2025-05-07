@@ -93,3 +93,35 @@ prepare_dates <- function(data,column){
 
   return(data_output)
 }
+
+
+
+
+## cleaning functions
+
+#' Cleans CGM data
+#'
+#' @param data to clean
+#'
+#' @returns clean data
+clean_cgm <- function(data) {
+  cleaned <- data |>
+    get_participant_id() |>
+    dplyr::rename(glucose = historic_glucose_mmol_l) |>
+    prepare_dates(device_timestamp)
+  return(cleaned)
+}
+
+#' Cleans sleep data
+#'
+#' @param data clean
+#'
+#' @returns clean data
+
+clean_sleep <- function(data) {
+  cleaned <- data |>
+    get_participant_id() |>
+    dplyr::rename(datetime = date) |>
+    prepare_dates(datetime)
+  return(cleaned)
+}

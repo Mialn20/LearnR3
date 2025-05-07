@@ -27,17 +27,13 @@ source(here("R/functions.R"))
 
 cgm_data <- here::here("data-raw/dime/cgm") |> 
   import_csv() |> 
-  get_participant_id() |> 
-  prepare_dates(device_timestamp)
+  clean_cgm()
+  
 
 sleep_data <- here("data-raw/dime/sleep") |>
   import_csv() |>
-  get_participant_id() |>
-  rename(datetime = date) |> 
-  prepare_dates(datetime)
-
-
-
+  clean_sleep()
+  
 
 ```
 
@@ -234,6 +230,9 @@ prepare_dates <- function(data,column){
 
 ```
 
+## Section 10
+
 ```{r}
+
 
 ```
