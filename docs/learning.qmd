@@ -10,19 +10,30 @@ theme: Darkly
 
 ```{r setup}
 #| include: false
+
+pak::pak()
 library(tidyverse)
 library(here)
 library(snakecase)
 library(readr)
 library(fs)
+library(purrr)
+library(stringr)
+library(dplyr)
+#usethis::use_package("")
+
 source(here("R/functions.R"))
+
+cgm_data <- here::here("data-raw/dime/cgm/") |> 
+  import_csv()
+
 ```
 
 # Importing DIME data
 
 ## Importing CGM data manually
 
-```{r}
+```{r eval=FALSE}
 cgm_101 <- here("data-raw/dime/cgm/101.csv") |>
   read_csv(show_col_types = FALSE,
            name_repair = to_snake_case,
@@ -43,7 +54,7 @@ View(sleep_101)
 
 ### Adding function
 
-```{r}
+```{r eval=FALSE}
 #' Adds two numbers
 #'
 #' @param num1 is a number
@@ -60,7 +71,7 @@ add_numbers <- function(num1, num2) {
 
 ### Importing functions individually(not general)
 
-```{r}
+```{r eval=FALSE}
 
 #' Import function CGM
 #'
@@ -104,40 +115,78 @@ here("data-raw/dime/sleep/101.csv") |>
 
 ### General import function use example
 
-```{r}
-import_data_snake("sleep","105",50)
+```{r eval=FALSE}
+#import_data_snake("sleep","105",50)
 
-here::here("data-raw/dime/cgm/101.csv") |> 
-import_dime() 
+#here::here("data-raw/dime/cgm/101.csv") |> 
+#import_dime() 
 
 ```
 
-```{r}
-
-cgm_files <- here::here("data-raw/dime/cgm/") |>
-  dir_ls(glob = "*.csv")
-sleep_files <- here::here("data-raw/dime/sleep/") |>
-  dir_ls(glob = "*.csv")
+```{r eval = FALSE}
+#cgm_files <- here::here("data-raw/dime/cgm/") |>
+#  dir_ls(glob = "*.csv")
+#sleep_files <- here::here("data-raw/dime/sleep/") |>
+#  dir_ls(glob = "*.csv")
 
 # With pipes
-cgm_data <- cgm_files |> 
-  map(import_dime) |> 
-  list_rbind(names_to = "file_path_id")
+#cgm_data <- cgm_files |> 
+#  map(import_dime) |> 
+#  list_rbind(names_to = "file_path_id")
 
 
-sleep_data <- sleep_files |> 
-  map(import_dime) |> 
-  list_rbind(names_to = "file_path_id")
+#sleep_data <- sleep_files |> 
+#  map(import_dime) |> 
+#  list_rbind(names_to = "file_path_id")
+
+```
+
+## Exercise: Convert map to function and use on sleep
+
+```{r eval = FALSE}
+#test <- here("data-raw/dime/sleep/") |>
+#import_csv()
+```
+
+## Cleaning characters and dates
+
+```{r eval=FALSE}
+#library(stringr)
+#library(lubridate)
+
+text <- "data-raw/dime/sleep/101.csv"
+
+str_extract(text,"\\d{3}")
+str_extract(text,"[:digit:]+\\.csv$")
+```
+
+## Using regex for ID extraction
+
+```{r}
+
+
+cgm_data |> 
+  dplyr::mutate(
+    id = stringr::str_extract(file_path_id,"[:digit:]+\\.csv$",) |> 
+      stringr::str_remove("\\.csv$") |> 
+      as.integer(),
+    .before = file_path_id
+  ) |>
+  select(-file_path_id)
 
 ```
 
 ```{r}
 
-```
+cgm_data <- here::here("data-raw/dime/cgm") |> 
+  import_csv() |> 
+  get_participant_id()
 
-```{r}
+cgm_sleep <- here::here("data-raw/dime/sleep") |> 
+  import_csv() |> 
+  get_participant_id()
 
-```
 
-```         
+cgm_data
+cgm_sleep
 ```

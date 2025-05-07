@@ -33,3 +33,42 @@ import_data_snake <- function(type_sort,id,n=50) {
       n_max = as.numeric(n))
   return(data)
 }
+
+
+
+
+#---- Importing function 3 ----
+#' importing csv
+#'
+#' @param folder_path path to the folder containing the csv files
+#'
+#' @returns data.frame of all the csv files in the folder rbinded together
+import_csv <- function(folder_path){
+
+  data_files <- here::here(folder_path) |>
+    fs::dir_ls(glob = "*.csv")
+
+  return_data <- data_files |>
+    purrr::map(import_dime) |>
+    purrr::list_rbind(names_to = "file_path_id")
+  return(return_data)
+}
+
+
+
+#' get_participant_id from a dataset
+#'
+#' @param Import_file data.frame containing the dataset from import_csv
+#'
+#' @returns
+
+get_participant_id <- function(Import_file){
+  Import_file |>
+    dplyr::mutate(
+      id = stringr::str_extract(file_path_id,"[:digit:]+\\.csv$",) |>
+        stringr::str_remove("\\.csv$") |>
+        as.integer(),
+      .before = file_path_id
+    ) |>
+    select(-file_path_id)
+}
