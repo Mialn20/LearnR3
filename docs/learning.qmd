@@ -14,6 +14,7 @@ library(tidyverse)
 library(here)
 library(snakecase)
 library(readr)
+library(fs)
 source(here("R/functions.R"))
 ```
 
@@ -101,7 +102,7 @@ here("data-raw/dime/sleep/101.csv") |>
 
 ```
 
-### General import function use example 
+### General import function use example
 
 ```{r}
 import_data_snake("sleep","105",50)
@@ -109,4 +110,34 @@ import_data_snake("sleep","105",50)
 here::here("data-raw/dime/cgm/101.csv") |> 
 import_dime() 
 
+```
+
+```{r}
+
+cgm_files <- here::here("data-raw/dime/cgm/") |>
+  dir_ls(glob = "*.csv")
+sleep_files <- here::here("data-raw/dime/sleep/") |>
+  dir_ls(glob = "*.csv")
+
+# With pipes
+cgm_data <- cgm_files |> 
+  map(import_dime) |> 
+  list_rbind(names_to = "file_path_id")
+
+
+sleep_data <- sleep_files |> 
+  map(import_dime) |> 
+  list_rbind(names_to = "file_path_id")
+
+```
+
+```{r}
+
+```
+
+```{r}
+
+```
+
+```         
 ```

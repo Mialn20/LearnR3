@@ -6,7 +6,7 @@
 #' @param n Number of rows to import
 #'
 #' @returns data.frame of n rows of the raw data
-import_dime <- function(file_path,n=50) {
+import_dime <- function(file_path,n=100) {
   data <- file_path |>
     readr::read_csv(
       show_col_types = FALSE,
