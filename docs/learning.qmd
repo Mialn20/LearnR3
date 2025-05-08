@@ -215,7 +215,7 @@ sleep_data
 
 ```
 
-## Working with dates  extraction
+## Working with dates extraction
 
 ```{r eval=FALSE}
 
