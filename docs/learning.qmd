@@ -52,7 +52,7 @@ readr::write_csv(dime_data,here::here("data/dime.csv"))
 
 
 join_all_full <- function(data_list) {
-  reduce(data_list, full_join)
+  purrr::reduce(data_list, full_join)
 }
 
 join_all_full(list(participant_details,cgm_data, sleep_data))
