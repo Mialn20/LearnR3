@@ -35,11 +35,31 @@ sleep_data <- here("data-raw/dime/sleep") |>
   import_csv() |>
   clean_sleep()
 
-participant_details <- here("data-raw/dime/participant_details.csv") |>
+participant_details <- here("data-raw/dime/participant_details.csv") |> 
   import_dime() |> 
   clean_participant_details()
-  
 
+
+dime_data <- participant_details |>
+  dplyr::full_join(cgm_data) |>
+  dplyr::full_join(sleep_data)
+  
+readr::write_csv(dime_data,here::here("data/dime.csv"))
+
+```
+
+```{r eval=FALSE}
+
+
+join_all_full <- function(data_list) {
+  reduce(data_list, full_join)
+}
+
+join_all_full(list(participant_details,cgm_data, sleep_data))
+dime_data
+
+
+sum(is.na(dime_data))
 ```
 
 # Importing DIME data
@@ -246,6 +266,8 @@ prepare_dates <- function(data,column){
 
 ```
 
+## Pivot longer
+
 ```{r eval=FALSE}
 
 clean_participant_details <- function(data){
@@ -263,4 +285,35 @@ participant_details <- here("data-raw/dime/participant_details.csv") |>
   clean_participant_details()
 
 View(participant_details)
+```
+
+## Pivot wider
+
+```{r eval=FALSE}
+sleep_data |>
+    tidyr::pivot_wider(
+      names_from = sleep_type,
+      names_prefix = "seconds_ ",
+      values_from = seconds_sum
+    )
+  
+
+
+
+```
+
+## Joining the data
+
+```{r eval=FALSE}
+participant_details
+cgm_data
+sleep_data
+
+
+participant_details |> 
+dplyr::left_join(cgm_data)
+
+dime_data <- participant_details |>
+  full_join(cgm_data) |> 
+  full_join(sleep_data)
 ```

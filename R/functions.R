@@ -6,7 +6,7 @@
 #' @param n Number of rows to import
 #'
 #' @returns data.frame of n rows of the raw data
-import_dime <- function(file_path,n=100) {
+import_dime <- function(file_path,n=Inf) {
   data <- file_path |>
     readr::read_csv(
       show_col_types = FALSE,
@@ -136,9 +136,26 @@ clean_cgm <- function(data) {
     get_participant_id() |>
     dplyr::rename(glucose = historic_glucose_mmol_l) |>
     prepare_dates(device_timestamp) |>
-    summarise_column(glucose,list(sum=sum,median=median,sd=sd))
+    summarise_column(glucose, list(mean = mean, sd = sd))
 
   return(cleaned)
+}
+
+
+
+#' Function to make sleep data wider
+#'
+#' @param data
+#'
+#' @returns wider data
+sleep_types_to_wider <- function(data) {
+  wider <- data |>
+    tidyr::pivot_wider(
+      names_from = sleep_type,
+      names_prefix = "seconds_of_",
+      values_from = seconds_sum
+    )
+  return(wider)
 }
 
 #' Cleans sleep data
@@ -152,9 +169,13 @@ clean_sleep <- function(data) {
     get_participant_id() |>
     dplyr::rename(datetime = date) |>
     prepare_dates(datetime) |>
-    summarise_column(seconds,list(sum=sum,median=median,sd=sd))
+    summarise_column(seconds, list(sum = sum)) |>
+    sleep_types_to_wider()
   return(cleaned)
 }
+
+
+
 
 # ---- cleaning participant_details -----
 
