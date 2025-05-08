@@ -5,4 +5,42 @@ editor: visual
 theme: Darkly
 ---
 
-## 
+# Setup
+
+```{r setup}
+library(lubridate)
+library(purrr)
+library(dplyr)
+
+source(here::here("R/functions-Mikkel.R"))
+
+survey_results <- readr::read_csv(here::here("data-raw/nurses-stress/survey-results.csv"),show_col_types = FALSE)
+
+TEMP_data <- import_function("data-raw/nurses-stress/","TEMP") |> 
+  get_participant_id() |> 
+  prepare_dates(collection_datetime)
+
+HR_data <- import_function("data-raw/nurses-stress/","HR") |> 
+  get_participant_id() |> 
+  prepare_dates(collection_datetime)
+
+
+BVP_data <- import_function("data-raw/nurses-stress/","BVP") |> 
+  get_participant_id() |> 
+  prepare_dates(collection_datetime)
+
+
+combined_data <- join_all_full(list(TEMP_data,HR_data, BVP_data))
+
+
+
+```
+
+```{r}
+combined_data
+```
+
+```{r}
+
+
+```
