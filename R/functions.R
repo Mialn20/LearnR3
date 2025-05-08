@@ -96,6 +96,33 @@ prepare_dates <- function(data,column){
 
 
 
+#----
+
+#' Function to summerise a single column based on one or more functions
+#'
+#' @param data
+#' @param column
+#' @param functions
+#'
+#' @returns None
+summarise_column <- function(data, column, functions) {
+  summerised_data <- data |>
+    dplyr::select(
+      -tidyselect::contains("device_timestamp"),
+      -tidyselect::contains("datetime")
+    ) |>
+    dplyr::group_by(dplyr::pick(-{{ column }})) |>
+    dplyr::summarise(
+      dplyr::across(
+        {{ column }},
+        functions
+      ),
+      .groups = "drop"
+    )
+
+  return(summerised_data)
+}
+
 
 #----- cleaning functions -----
 
@@ -108,7 +135,9 @@ clean_cgm <- function(data) {
   cleaned <- data |>
     get_participant_id() |>
     dplyr::rename(glucose = historic_glucose_mmol_l) |>
-    prepare_dates(device_timestamp)
+    prepare_dates(device_timestamp) |>
+    summarise_column(glucose,list(sum=sum,median=median,sd=sd))
+
   return(cleaned)
 }
 
@@ -122,6 +151,28 @@ clean_sleep <- function(data) {
   cleaned <- data |>
     get_participant_id() |>
     dplyr::rename(datetime = date) |>
-    prepare_dates(datetime)
+    prepare_dates(datetime) |>
+    summarise_column(seconds,list(sum=sum,median=median,sd=sd))
   return(cleaned)
 }
+
+# ---- cleaning participant_details -----
+
+#' Function to clean participant details
+#'
+#' @param data data.frame containing the dataset from import_dime
+#'
+#' @returns returns clean data
+
+clean_participant_details <- function(data){
+  data_output <- data |>  tidyr::pivot_longer(ends_with("date"), names_to = NULL, values_to = "date") |>
+    dplyr::group_by(pick(-date)) |>
+    tidyr::complete(
+      date = seq(min(date),max(date),by="1 day")
+    )
+  return(data_output)
+}
+
+
+
+

@@ -12,6 +12,8 @@ Imports:
     purrr,
     readr,
     snakecase,
-    stringr
+    stringr,
+    tidyr,
+    tidyselect
 Depends: 
     tidyverse

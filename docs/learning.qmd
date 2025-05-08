@@ -21,18 +21,23 @@ library(purrr)
 library(stringr)
 library(dplyr)
 library(lubridate)
+library(styler)
 #usethis::use_package("")
 
 source(here("R/functions.R"))
 
 cgm_data <- here::here("data-raw/dime/cgm") |> 
   import_csv() |> 
-  clean_cgm()
+  clean_cgm() 
   
 
 sleep_data <- here("data-raw/dime/sleep") |>
   import_csv() |>
   clean_sleep()
+
+participant_details <- here("data-raw/dime/participant_details.csv") |>
+  import_dime() |> 
+  clean_participant_details()
   
 
 ```
@@ -233,26 +238,29 @@ prepare_dates <- function(data,column){
 ## Section 10
 
 ```{r}
-summarise_column <- function(data, column, functions) {
-  data |>
-    dplyr::select(
-      -tidyselect::contains("device_timestamp"),
-      -tidyselect::contains("datetime")
-    ) |>
-    dplyr::group_by(dplyr::pick(-{{ column }})) |>
-    dplyr::summarise(
-      dplyr::across(
-        {{ column }},
-        functions
-      ),
-      .groups = "drop"
-    )
+#cgm_data |>
+#  summarise_column(glucose,list(sum=sum,median=median,sd=sd))
+
+#sleep_data |>
+#  summarise_column(seconds,list(sum=sum,median=median,sd=sd))
+
+```
+
+```{r eval=FALSE}
+
+clean_participant_details <- function(data){
+  data_output <- data |>  tidyr::pivot_longer(ends_with("date"), names_to = NULL, values_to = "date") |>
+  dplyr::group_by(pick(-date)) |> 
+  tidyr::complete(
+    date = seq(min(date),max(date),by="1 day")
+  )
+  return(data_output)
 }
 
 
-cgm_data |>
-  summarise_column(glucose,list(sum=sum,median=median,sd=sd))
+participant_details <- here("data-raw/dime/participant_details.csv") |>
+  import_dime() |> 
+  clean_participant_details()
 
-sleep_data |>
-  summarise_column(seconds,sum)
+View(participant_details)
 ```
